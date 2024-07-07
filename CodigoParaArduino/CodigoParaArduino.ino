@@ -4,46 +4,46 @@ Scheduler RealTimeCore;       //Esto crea un objeto del tipo Scheduler (definido
 
 
 // Pines
-int referencia = A0;          // Entrada del pote 
-int Vread_planta = A1;         // Salida Vread de la planta 
-int Controlador = 3;          // Variable controlada (alimentacion del circuito)
+int sensorRef = A0;          // Entrada del pote 
+int sensorVplanta = A1;         // Salida Vread de la planta 
+int source = 3;          // Variable controlada (alimentacion del circuito)
 
 
 //Ganacia Global
 float error = 0;                  // Error actual
 float error_ant = 0;              // Error anterior
 float error_acum = 0;             // Error acumulado
-int varRef;                 // Valor de referencia
-int varRef2;
-int varVread = 0;                // Salida de la planta
+int analogRef;                       // Valor de sensorRef
+int digitalRefSat;
+int analogPlanta = 0;                // Salida de la planta
 int varVs = 0;                  // Señal de control
 
 
 // Prototipos de las funciones
-void func_referencia();           // Funcion destinada a muestrear e interpretar la entrada de referencia
+void func_sensorRef();           // Funcion destinada a muestrear e interpretar la entrada de sensorRef
 void func_Vread();                 // Funcion destinada a muestrear e interpretar la salida Vread del circuito
 void func_Vs();                   // Funcion destianada a controlar la alimentacion de la planta
 
 
 // Objetos de tipo task que se refrescan 10 veces por segundo
-Task tarea_ref(1000, TASK_FOREVER, &func_referencia, &RealTimeCore, true);      //
-Task tarea_vs(1, TASK_FOREVER, &func_Vs, &RealTimeCore, true);               //
+Task tarea_ref(500, TASK_FOREVER, &func_sensorRef, &RealTimeCore, true);      //
+Task tarea_vs(100, TASK_FOREVER, &func_Vs, &RealTimeCore, true);               //
 Task tarea_Vread(500, TASK_FOREVER, &func_Vread, &RealTimeCore, true);           //
 
 
 // Definicion explicita de las funcios
-void func_referencia(){
-  varRef = analogRead(referencia);
-  varRef2 = map(varRef, 0, 1023, 54, 206);
+void func_sensorRef(){
+  analogRef = analogRead(sensorRef);
+  digitalRefSat = map(analogRef, 0, 1023, 54, 206);
 }
 
 void func_Vs(){
-  analogWrite(Controlador, varRef2);  // Escribe el valor convertido al pin PWM
+  analogWrite(source, digitalRefSat);  // Escribe el valor convertido al pin PWM
 }
 
 void func_Vread(){
-  varVread = analogRead(Vread_planta);
-  Serial.println(varVread);
+  analogPlanta = analogRead(sensorVplanta);
+  Serial.println(analogPlanta);
 }
 
 // setup() # Este codigo corre una vez
@@ -71,19 +71,19 @@ void loop() {
 //Scheduler RealTimeCore;
 //
 //// Pines utilizados en el Arduino
-//int Controlador = 3;
-//int Referencia = A0;
+//int source = 3;
+//int sensorRef = A0;
 //int Planta = A1;
 //
 //// Variables globales
 //float error = 0; // Error actual
 //float error_ant = 0; // Error anterior
 //float error_acum = 0; // Error acumulado
-//float ref = 0; // Valor de referencia
+//float ref = 0; // Valor de sensorRef
 //float val = 0; // Salida de la planta
 //float u = 0; // Señal de control
 //
-//// Se definen los parámetros del controlador
+//// Se definen los parámetros del source
 //#define KP 6000 // Ganancia proporcional
 //#define KI 6.19355 // Ganancia integral
 //#define KD 60.366 // Ganancia derivativa
@@ -107,7 +107,7 @@ void loop() {
 //// Ahora se definen explícitamente las funciones
 //
 //void tarea01Fun(){
-//    ref = analogRead(Referencia); // leer el valor de la entrada de referencia del potenciómetro
+//    ref = analogRead(sensorRef); // leer el valor de la entrada de sensorRef del potenciómetro
 //    val = analogRead(Planta); // leer el valor de la salida de la planta
 //}
 //
@@ -117,19 +117,19 @@ void loop() {
 //}
 //
 //void tarea03Fun(){
-//    // Se calcula la señal de control usando el controlador PID
+//    // Se calcula la señal de control usando el source PID
 //    u = KP * error + KI * error_acum + KD * (error - error_ant) / TS;
 //    
 //    // Se limita la señal de control a un rango específico (0-255)
 //    u = constrain(u, 0, 255);
 //    
 //    // Se escribe la señal de control en el pin PWM
-//    analogWrite(Controlador, u);
+//    analogWrite(source, u);
 //}
 //
 //void tarea04Fun(){
-//    // Se envían los valores ya normalizados de la referencia y la salida de la planta por el puerto serie
-//    Serial.print("Referencia: ");
+//    // Se envían los valores ya normalizados de la sensorRef y la salida de la planta por el puerto serie
+//    Serial.print("sensorRef: ");
 //    Serial.print(ref);
 //    Serial.print(" - Salida de la planta: ");
 //    Serial.println(val);
@@ -140,8 +140,8 @@ void loop() {
 //    Serial.begin(9600);
 //    
 //    // Inicializar los pines
-//    pinMode(Controlador, OUTPUT);
-//    pinMode(Referencia, INPUT);
+//    pinMode(source, OUTPUT);
+//    pinMode(sensorRef, INPUT);
 //    pinMode(Planta, INPUT);
 //    
 //    // Iniciar el scheduler
