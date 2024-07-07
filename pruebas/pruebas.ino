@@ -1,21 +1,59 @@
-int sensorPin = A0;    // Pin analógico donde está conectado el sensor
-int outputPin = 9;     // Pin PWM donde quieres la salida analógica
+//
+
+int pulsador=2; //colocar resistencia pull up
+
+int u;
+
+double xk=0;
+
+double uk_1=0;
+
+double xk_1=0;
+
+double uk_2=0;
+
+double xk_2=0; 
+
+int i=1;
+
+
 
 void setup() {
-  Serial.begin(9600);  // Inicializa la comunicación serie a 9600 baudios
-  pinMode(outputPin, OUTPUT);  // Configura el pin de salida como salida
+
+  Serial.begin(9600);
+
+  pinMode(pulsador, INPUT);//colocar resistencia pull up
+
 }
 
 void loop() {
-  int sensorValue = analogRead(sensorPin);  // Lee el valor del pin analógico A0 (valor entre 0 y 1023)
-  int outputValue = map(sensorValue, 277, 1023, 58, 206);  // Convierte el valor al rango 0-255
-  
-  analogWrite(outputPin, outputValue);  // Escribe el valor convertido al pin PWM
-  
-  Serial.print("Sensor Value: ");
-  Serial.print(sensorValue);  // Imprime el valor del sensor
-  Serial.print("\tOutput Value: ");
-  Serial.println(outputValue);  // Imprime el valor convertido
-  
-  delay(1000);  // Espera 1 segundo antes de la siguiente lectura
+
+  xk=uk_1*0.05984 +uk_2*0.05787+ xk_1*1.787-xk_2*0.9048; //T=0.25 seg
+
+  //xk=uk_1*0.2247 +uk_2*0.2099+ xk_1*1.384-xk_2*0.8187; //T=0.5 seg
+
+  uk_1=10*u;
+
+  uk_2=0;
+
+  xk_2=0;
+
+  if (i>1) {
+
+    uk_2=uk_1;
+
+    xk_2=xk_1; 
+
+  }
+
+  u=digitalRead(pulsador);
+
+  xk_1=xk;
+
+  i=i+1;
+
+  Serial.println(xk);
+
+  delay(250);   // segun T  
+
 }
