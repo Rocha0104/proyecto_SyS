@@ -1,4 +1,3 @@
-// --> include libraries # Librerias
 
 #include <TaskScheduler.h>    //Se carga la librería del Scheduler
 Scheduler RealTimeCore;       //Esto crea un objeto del tipo Scheduler (definido por la librería).
@@ -11,18 +10,18 @@ int Controlador = 3;          // Variable controlada (alimentacion del circuito)
 
 
 //Ganacia Global
-float error = 0;              // Error actual
-float error_ant = 0;          // Error anterior
-float error_acum = 0;         // Error acumulado
-float ref = 0;                // Valor de referencia
-float val = 0;                // Salida de la planta
-float u = 0;                  // Señal de control
+float error = 0;                  // Error actual
+float error_ant = 0;              // Error anterior
+float error_acum = 0;             // Error acumulado
+float varRef = 0;                 // Valor de referencia
+float varVout = 0;                // Salida de la planta
+float varVs = 0;                  // Señal de control
 
 
 // Prototipos de las funciones
-void f_referencia();          // Funcion destinada a muestrear e interpretar la entrada de referencia
-void f_Vout();                // Funcion destinada a muestrear e interpretar la salida Vout del circuito
-void f_Vs();                  // Funcion destianada a controlar la alimentacion de la planta
+void func_referencia();           // Funcion destinada a muestrear e interpretar la entrada de referencia
+void func_Vout();                 // Funcion destinada a muestrear e interpretar la salida Vout del circuito
+void func_Vs();                   // Funcion destianada a controlar la alimentacion de la planta
 
 
 // Objetos de tipo task que se refrescan 10 veces por segundo
@@ -32,18 +31,20 @@ Task tarea_vs(100, TASK_FOREVER, &f_Vs, &RealTimeCore, true);               //
 
 
 // Definicion explicita de las funcios
-void f_referencia(){
-  Serial.print("Se ejecuta la tarea 01 a los "); //Escribe un string en el puerto serial
+void func_referencia(){
+  varRef = analogRead(referencia);
+  Serial.print("Se ejecuta la tarea ref a los ");                           //Escribe un string en el puerto serial
   Serial.println(millis());
 }
 
-void f_Vout(){
-  Serial.print("Se ejecuta la tarea 02 a los "); //Escribe un string en el puerto serial
+void func_Vout(){
+  varVout = analogRead(Vout_planta)
+  Serial.print("Se ejecuta la tarea Vout a los ");                          //Escribe un string en el puerto serial
   Serial.println(millis());
 }
 
-void f_Vs(){
-  Serial.print("Se ejecuta la tarea 03 a los "); //Escribe un string en el puerto serial
+void func_Vs(){
+  Serial.print("Se ejecuta la tarea Vs a los ");                            //Escribe un string en el puerto serial
   Serial.println(millis());
 }
 
