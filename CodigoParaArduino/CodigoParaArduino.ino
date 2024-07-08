@@ -11,8 +11,7 @@ int sensorVplanta = A1;         // Salida Vread de la planta
 int source = 3;          // Variable controlada (alimentacion del circuito)
 
 //Ganacia Global
-int digitalRefSat;                  // Valor del sensorRef pero en digital
-int digitalPlanta;
+int Uk_0_digital;                  // Valor de sourcing en digital
 
 int Rk_0 = 0;                      // Valor leido sensorRef   
 int Yk_0 = 0;                      // Valor leido de la planta
@@ -32,16 +31,15 @@ void printData();                 // Funcion destinada a muestrear e interpretar
 
 // Objetos de tipo task que se refrescan 10 veces por segundo
 Task read_and_sourcing(100, TASK_FOREVER, &source_control, &RealTimeCore, true);      //
-Task print(500, TASK_FOREVER, &printData, &RealTimeCore, true);               //
+Task printing(500, TASK_FOREVER, &printData, &RealTimeCore, true);               //
 
 
 // Definicion explicita de las funcios
 void source_control(){
   Yk_0 = analogRead(sensorVplanta);
-  
-
   Rk_0 = analogRead(sensorRef);
   Ek_0 = Rk_0 - Yk_0;
+
   Uk_0 = 31.66*Ek_0 - 61.12*Ek_1 + 29.47*Ek_2 + 1.812*Uk_1 - 0.8122*Uk_2;
 
   if (Uk_0 > SatSuperior){
@@ -55,13 +53,15 @@ void source_control(){
   Uk_2 = Uk_1;
   Uk_1 = Uk_0;
 
-  digitalRefSat = map(Uk_0, 0, 1023, 0, 255);
-  analogWrite(source, digitalRefSat);  // Escribe el valor convertido al pin PWM
+  Uk_0_digital = map(Uk_0, 0, 1023, 0, 255);
+  
+  // Sourcing
+  analogWrite(source, Uk_0_digital);  // Escribe el valor convertido al pin PWM
 
 }
 
 void printData(){
-  Serial.println(Yk_0 * (5.0/1023) );
+  Serial.println(Yk_0 * (5.0/1023) );  // Mostrando el valor de la planta en volts
 }
 
 
