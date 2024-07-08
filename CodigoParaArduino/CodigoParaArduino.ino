@@ -31,7 +31,7 @@ void printData();                 // Funcion destinada a muestrear e interpretar
 
 // Objetos de tipo task que se refrescan 10 veces por segundo
 Task read_and_sourcing(100, TASK_FOREVER, &source_control, &RealTimeCore, true);      //
-Task printing(500, TASK_FOREVER, &printData, &RealTimeCore, true);               //
+Task printing(50, TASK_FOREVER, &printData, &RealTimeCore, true);               //
 
 
 // Definicion explicita de las funcios
