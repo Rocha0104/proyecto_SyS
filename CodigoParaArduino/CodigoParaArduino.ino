@@ -61,7 +61,13 @@ void source_control(){
 }
 
 void printData(){
-  Serial.println(Yk_0 * (5.0/1023) );  // Mostrando el valor de la planta en volts
+  Serial.println(", ");
+  Serial.print(Yk_0 * (5.0/1023) );  // Mostrando el valor de la planta en volts
+  Serial.println(", ");
+  Serial.print(Uk_0 * (5.0/1023) );  // Mostrando el valor de la planta en volts
+  Serial.println(", ");
+  Serial.print(Rk_0 * (5.0/1023) );  // Mostrando el valor de la planta en volts
+  Serial.println(", ");
 }
 
 
